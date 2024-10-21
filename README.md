@@ -20,8 +20,7 @@ A Docker-based LaTeX PDF generation service using LuaTeX with AWS Lambda integra
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/<your-username>/docker-pdf-generator.git
-   cd docker-pdf-generator
+   git clone git@github.com:mtrxsh/docker-aws-lambda-pdflatex.git
    ```
 
 2. Build the Docker image:
@@ -36,11 +35,46 @@ A Docker-based LaTeX PDF generation service using LuaTeX with AWS Lambda integra
    docker run --platform linux/amd64 -it -p 8080:8080 pdflatex
    ```
 
-4. Run client app:
+4. Run client (local):
 
-  ```bash
-  node app.js
+  ```javascript
+  try {
+    let templateB64; // .tex or .zip, base64 encoded  
+    let payload = {
+      templateZipBase64: templateB64,
+      inputFileName: "main.tex",
+      outputFileName: "main.pdf",
+    };
+    let data = Buffer.from(JSON.stringify(payload)).toString("base64");
+    const response = await axios.post(
+      `http://localhost:8080/2015-03-31/functions/function/invocations`,
+      {
+        data,
+      }
+    );
+    let responseData = response.data;
+    console.log("Server response:", responseData);
+    let result = JSON.parse(responseData.body);
+    parseBase64ToFile(
+      result.content,
+      path.join(__dirname, "output/output.pdf")
+    );
+  } catch (error) {
+    console.error("Error calling server:", error.message);
+  }
   ```
+
+5. Run client with AWS Lambda integration:
+    ```javascript
+    let payload = {
+      "templateBucketName": "s3_template_bucket",
+      "templateObjectKey": "templates/template_folder",
+      "inputBucketName": "s3_input_bucket",
+      "inputObjectKey": "input/test.tex",
+      "outputBucketName": "s3_output_bucket",
+      "outputObjectKey": "output/test.pdf”
+    };
+    ```
 
 ## Acknowledgments
 
