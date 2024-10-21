@@ -22,20 +22,26 @@ A Docker-based LaTeX PDF generation service using LuaTeX with AWS Lambda integra
    ```bash
    git clone git@github.com:mtrxsh/docker-aws-lambda-pdflatex.git
    ```
+   
+2. Pull the Docker image:
 
-2. Build the Docker image:
+   ```bash
+   docker pull tunatr/aws-lambda-pdflatex:v1
+   ```
+
+3. Build the Docker image:
 
    ```bash
    docker build --platform linux/amd64 -t pdflatex . --rm
    ```
 
-3. Run the container:
+4. Run the container:
 
    ```bash
    docker run --platform linux/amd64 -it -p 8080:8080 pdflatex
    ```
 
-4. Run client (local):
+5. Run client (local):
 
   ```javascript
   try {
@@ -64,7 +70,7 @@ A Docker-based LaTeX PDF generation service using LuaTeX with AWS Lambda integra
   }
   ```
 
-5. Run client with AWS Lambda integration:
+6. Run client with AWS Lambda integration:
     ```javascript
     let payload = {
       "templateBucketName": "s3_template_bucket",
